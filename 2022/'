@@ -1,0 +1,19 @@
+import sys
+
+
+def main():
+    path = []
+    for o in [l.strip() for l in sys.stdin]:
+        if o.startswith('$'):
+            cmd = o[2:].split()
+            print 'command ', cmd
+            continue
+        if o.startswith('dir'):
+            print '/', o
+            continue
+        print o
+
+
+if '__main__' == __name__:
+    main()
+
