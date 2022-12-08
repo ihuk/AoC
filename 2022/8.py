@@ -3,28 +3,28 @@ import sys
 
 def main():
     m = [[int(c) for c in l] for l in [l.strip() for l in sys.stdin] for c in l.split()]
-    visible = []
-    scenic = []
+    vs = []
+    ss = []
     for i, r in enumerate(m):
-        for c, h in enumerate(r):
-            left = r[:c]
-            right = r[c + 1:] 
-            top = [rt[c] for rt in m[:i]]
-            bottom = [rb[c] for rb in m[i + 1: ]]
-            if any([all(lh < h for lh in left), all(rh < h for rh  in right), all(th < h for th in top), all(bh < h for bh  in bottom)]):
-                visible.append((i, c))
-            scenic.append(dist(h, reversed(left)) * dist(h, right) * dist(h, reversed(top)) * dist(h, bottom))
-    print len(visible)
-    print max(scenic)
+        for j, h in enumerate(r):
+            w = r[:j]
+            e = r[j + 1:] 
+            n = [rt[j] for rt in m[:i]]
+            s = [rb[j] for rb in m[i + 1: ]]
+            if any([all(t < h for t in w), all(t < h for t  in e), all(t < h for t in n), all(t < h for t in s)]):
+                vs.append((i, j))
+            ss.append(dist(h, reversed(w)) * dist(h, e) * dist(h, reversed(n)) * dist(h, s))
+    print len(vs)
+    print max(ss)
 
 
 def dist(h, l):
-    dist = 0
-    for e in l:
-        dist += 1
-        if e >= h:
+    d = 0
+    for t in l:
+        d += 1
+        if t >= h:
             break
-    return dist
+    return d
 
 
 if '__main__' == __name__:
