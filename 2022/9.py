@@ -2,51 +2,27 @@ import sys
 
 
 def main():
-    ks = [(0, 0)] * 10
-    ts = set(ks)
-    ms = {'L': (-1, 0), 'R': (1, 0), 'U': (0, 1), 'D': (0, -1)}
+    moves = {'L': (-1, ), 'R': (1, 0), 'U': (0, 1), 'D': (0, -1)}
+    offsets = {
+    knots = [(0, 0)] * 10
+    trail = set(knots)
+    print trail
     for direction, steps in [(d, int(s)) for d, s in [l.strip().split() for l in sys.stdin]]:
-        print(f"{direction} {steps}")
         for _ in range(steps):
-            dx, dy = ms[direction]
-            ks[0] = (ks[0][0] + dx, ks[0][1] + dy)
-            for i in range(1, len(ks)):
-                h = ks[i - 1]
-                t = ks[i]
-                match (h[0] - t[0], h[1] - t[1]):
-                    case (-2, 0):
-                        t = (t[0] - 1, t[1])
-                    case (-2, 1):
-                        t = (t[0] - 1, t[1] + 1)
-                    case (-1, 2):
-                        t = (t[0] - 1, t[1] + 1)
-                    case (0, 2):
-                        t = (t[0], t[1] + 1)
-                    case (1, 2):
-                        t = (t[0] + 1, t[1] + 1)
-                    case (2, 1):
-                        t = (t[0] + 1, t[1] + 1)
-                    case (2, 0):
-                        #print(f"R {h}, {t}")
-                        t = (t[0] + 1, t[1])
-                    case (2, -1):
-                        t = (t[0] + 1, t[1] - 1)
-                    case (1, -2):
-                        t = (t[0] + 1, t[1] - 1)
-                    case (0, -2):
-                        t = (t[0], t[1] - 1)
-                    case (-1, -2):
-                        t = (t[0] - 1, t[1] - 1)
-                    case (-2, -1):
-                        t = (t[0] - 1, t[1] - 1)
-                    case _:
-                        print("wtf: ", h[0] - t[0], h[1] - t[1])
-                #print(f"head: {h}, tail {ks[i]} -> {t}")
-                ks[i] = t
-            #print(ks[-1])
-            ts.add(ks[-1])
-    print(ks)
-    print(f"len: {len(ts)}") 
+            dx, dy = moves[direction]
+            knots[0] = (knots[0][0] + dx, knots[0][1] + dy)
+            for i in range(1, len(knots)):
+                h = knots[i - 1]
+                t = knots[i]
+                if abs(h[0] - t[0]) < 2 and abs(h[1] - t[1]) < 2:
+                    continue
+                if h[0] == t[0] or h[1] == t[1]:
+                    t = (t[0] + dx, t[1] + dy)
+                else:
+                    t = (t[0] + dx if dx else h[0], t[1] + dy if dy else h[1])
+                knots[i] = t
+            trail.add(knots[-1])
+    print len(trail)
 
 
 if '__main__' == __name__:
