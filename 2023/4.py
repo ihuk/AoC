@@ -3,20 +3,24 @@ import sys
 
 
 def main():
-    result = 0
-    for ps in [ps.split('|') for _, ps in [l.strip().split(':') for l in sys.stdin]]:
-        wss, nss = ps
-        wns = set([int(w) for w in wss.split()])
+    points = 0
+    copies = {}
+    for l in [l.strip()for l in sys.stdin]:
+        cs, cnss = [s.strip() for s in l.split(':')]
+        c = int(cs.split()[-1])
+        wss, nss = cnss.split('|')
+        wns = set([int(n) for n in wss.split()])
         cns = set([int(n) for n in nss.split()])
-        pns = cns.intersection(wns)
-        if not pns:
-            continue
-        result += 2 ** (len(pns) - 1)
-    print(result)
+        ps = len(cns.intersection(wns))
+        if ps:
+            points += 2**(ps - 1)
+        copies[c] = copies.get(c, 0) + 1
+        for cn in range(c + 1, c + ps + 1):
+            copies[cn] = copies.get(cn, 0) + copies[c]
+    print(points)
+    print(sum(copies.values()))
 
 
 if '__main__' == __name__:
     main()
-
-
 
