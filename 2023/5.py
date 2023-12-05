@@ -15,7 +15,7 @@ MAPS = [
 
 def main():
     seeds = []
-    translation_maps = defaultdict(dict)
+    translation_maps = defaultdict(list)
     almanac = [l.strip() for l in sys.stdin]
     _, ss = almanac.pop(0).split(':')
     seeds = [int(s) for s in ss.split()]
@@ -29,17 +29,36 @@ def main():
             if not l:
                 break
             ds, ss, rl = map(int, l.split())
-            for s, d in zip(range(ss, ss + rl), range(ds, ds + rl)):
-                translation_maps[m][s] = d
-    print("computed translation tables")
+            translation_maps[m].append((ss, ds, rl))
+    print(translation_maps)
     locations = []
     for s in seeds:
         location = s
         for m in translation_maps:
-            location = translation_maps[m].get(location, location)
+            for ss, ds, rl in translation_maps[m]:
+                if ss <= location < (ss + rl):
+                    #print(f'{m}: {ss} <= {location} < {ss + rl}: {location} -> {ds + (location - ss)}')
+                    location = ds + (location - ss)
+                    break
         locations.append(location)
     print(min(locations))
+    locations = []
+    seed_ranges = [(seeds[i], seeds[i] + seeds[i + 1]) for i in range(0, len(seeds) - 1, 2)]
+    for srs, sre in seed_ranges:
+        for s in range(srs, sre):
+            location = s
+            for m in translation_maps:
+                for ss, ds, rl in translation_maps[m]:
+                    if location < ss:
+                        continue
+                    if ss <= location < (ss + rl):
+                        location = ds + (location - ss)
+                        break
+            locations.append(location)
+    print(min(locations))
+
 
 if '__main__' == __name__:
     main()
+
 
