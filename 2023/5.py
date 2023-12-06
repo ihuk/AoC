@@ -1,6 +1,6 @@
 import sys
 from collections import defaultdict
-
+from itertools import count
 
 MAPS = [
     'seed-to-soil',
@@ -11,7 +11,6 @@ MAPS = [
     'temperature-to-humidity',
     'humidity-to-location',
 ]
-
 
 def main():
     seeds = []
@@ -30,32 +29,27 @@ def main():
                 break
             ds, ss, rl = map(int, l.split())
             translation_maps[m].append((ss, ds, rl))
-    print(translation_maps)
     locations = []
     for s in seeds:
         location = s
         for m in translation_maps:
             for ss, ds, rl in translation_maps[m]:
                 if ss <= location < (ss + rl):
-                    #print(f'{m}: {ss} <= {location} < {ss + rl}: {location} -> {ds + (location - ss)}')
                     location = ds + (location - ss)
                     break
         locations.append(location)
     print(min(locations))
-    locations = []
     seed_ranges = [(seeds[i], seeds[i] + seeds[i + 1]) for i in range(0, len(seeds) - 1, 2)]
-    for srs, sre in seed_ranges:
-        for s in range(srs, sre):
-            location = s
-            for m in translation_maps:
-                for ss, ds, rl in translation_maps[m]:
-                    if location < ss:
-                        continue
-                    if ss <= location < (ss + rl):
-                        location = ds + (location - ss)
-                        break
-            locations.append(location)
-    print(min(locations))
+    for i in count(): 
+        location = i
+        for m in reversed(translation_maps):
+            for ss, ds, rl in translation_maps[m]:
+                if ds <= location < (ds + rl):
+                    location = ss + (location - ds)
+                    break
+        if any([srs <= location < sre for srs, sre in seed_ranges]):
+            print(i)
+            break
 
 
 if '__main__' == __name__:
